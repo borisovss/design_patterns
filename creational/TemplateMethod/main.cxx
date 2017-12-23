@@ -74,7 +74,7 @@ class University: public Education {
 
 int main()
 {
-  School *oSchool = new School();
+  School     *oSchool     = new School();
   University *oUniversity = new University();
 
   oSchool->learn();
