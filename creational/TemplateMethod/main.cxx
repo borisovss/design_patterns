@@ -4,18 +4,18 @@ class Education {
   public:
     Education() {}
     virtual ~Education() {}
-    virtual std::string stepName()    = 0;
-    virtual std::string admission()   = 0;
-    virtual std::string studying()    = 0;
-    virtual std::string examination() = 0;
-    virtual std::string awarding()    = 0;
+    virtual std::string stepName()  = 0;
+    virtual std::string admission() = 0;
+    virtual std::string studying()  = 0;
+    virtual std::string control()   = 0;
+    virtual std::string awarding()  = 0;
     void learn()
     {
-      std::cout <<         stepName()    << std::endl;
-      std::cout << "  " << admission()   << std::endl;
-      std::cout << "  " << studying()    << std::endl;
-      std::cout << "  " << examination() << std::endl;
-      std::cout << "  " << awarding()    << std::endl;
+      std::cout <<         stepName()  << std::endl;
+      std::cout << "  " << admission() << std::endl;
+      std::cout << "  " << studying()  << std::endl;
+      std::cout << "  " << control()   << std::endl;
+      std::cout << "  " << awarding()  << std::endl;
     }
 };
 
@@ -35,7 +35,7 @@ class School: public Education {
     {
       return "Attending lessons";
     }
-    std::string examination()
+    std::string control()
     {
       return "Exams passage";
     }
@@ -62,7 +62,7 @@ class University: public Education {
     {
       return "Attending lectures";
     }
-    std::string examination()
+    std::string control()
     {
       return "State examination";
     }
