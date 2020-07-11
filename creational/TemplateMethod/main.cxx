@@ -45,11 +45,11 @@ class University: public Education
 
 int main()
 {
-  const School *school = new School();
-  school->learn();
+    const School *school = new School();
+    school->learn();
 
-  const University *university = new University();
-  university->learn();
+    const University *university = new University();
+    university->learn();
 
-  return 0;
+    return 0;
 }
