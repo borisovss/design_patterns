@@ -2,12 +2,6 @@
 
 namespace Season
 {
-    enum class Type
-    {
-        Summer,
-        Winter
-    };
-
     class ISeason
     {
         public:
@@ -66,23 +60,13 @@ namespace Season
     }
 }
 
-Season::Provider::IProvider* getSeasonProvider(Season::Type seasonType)
-{
-    switch (seasonType)
-    {
-        case Season::Type::Summer: return new Season::Provider::Summer();
-        case Season::Type::Winter: return new Season::Provider::Winter();
-    }
-    return nullptr;
-}
-
 int main()
 {
-  const Season::Provider::IProvider *seasonProvider = getSeasonProvider(Season::Type::Summer);
+    const Season::Provider::IProvider *seasonProvider = new Season::Provider::Summer();
 
-  const Season::ISeason *season = seasonProvider->getSeason();
+    const Season::ISeason *season = seasonProvider->getSeason();
 
-  season->info();
+    season->info();
 
-  return 0;
+    return 0;
 }
