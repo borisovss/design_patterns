@@ -1,93 +1,88 @@
 #include <iostream>
 
-namespace Interface {
-  namespace Actor {
-    class Season   /* интерфейс объекта */
-    {
-      public:
-        Season() {}
-        virtual ~Season() {}
-        virtual void info() = 0;
-    };
-  }
-  namespace Factory {
-    class Season /* интерфейс фабрики объектов */
-    {
-      public:
-        Season() {}
-        virtual ~Season() {}
-        virtual Interface::Actor::Season* obtaineSeason() = 0;
-    };
-  }
-}
-
-namespace Actor {
-  namespace Season {
-    class Summer : public Interface::Actor::Season /* реализация объекта типа "Season::Summer" */
-    {
-      public:
-        Summer() {}
-        virtual ~Summer() {}
-        void info() { std::cout << "Summer Season" << std::endl; }
-    };
-    class Winter : public Interface::Actor::Season /* реализация объекта "Season::Winter" */
-    {
-      public:
-        Winter() {}
-        virtual ~Winter() {}
-        void info() { std::cout << "Winter Season" << std::endl; }
-    };
-  }
-}
-
-namespace Factory {
-  namespace Season {
-    class Summer : public Interface::Factory::Season /* реализация фабрики объектов "Season" типа "Summer" */
-    {
-      public:
-        Summer() {}
-        virtual ~Summer() {}
-        virtual Interface::Actor::Season *obtaineSeason() { return new Actor::Season::Summer(); }
-    };
-    class Winter: public Interface::Factory::Season /* реализация фабрики объектов "Season" типа "Winter" */
-    {
-      public:
-        Winter() {}
-        virtual ~Winter() {}
-        virtual Interface::Actor::Season* obtaineSeason() { return new Actor::Season::Winter(); }
-    };
-  }
-}
-
-/* получить используемую фабрику */
-Interface::Factory::Season* obtaineSeasonFactory()
+namespace Season
 {
-    #define SUMMER 1
+    enum class Type
+    {
+        Summer,
+        Winter
+    };
 
-    #if    SUMMER
-        return new Factory::Season::Summer();
-    #elif  Winter
-        return new Factory::Season::Winter();
-    #else
-        return NULL;
-    #endif
+    class ISeason
+    {
+        public:
+            virtual ~ISeason() {}
+            virtual void info() const = 0;
+    };
+
+    class Summer : public ISeason
+    {
+        public:
+            virtual ~Summer() {}
+            void info() const
+            {
+                std::cout << "Summer Season" << std::endl;
+            }
+    };
+
+    class Winter : public ISeason
+    {
+        public:
+            virtual ~Winter() {}
+            void info() const
+            {
+                std::cout << "Winter Season" << std::endl;
+            }
+    };
+
+    namespace Provider
+    {
+        class IProvider
+        {
+            public:
+                virtual ~IProvider() {}
+                virtual ISeason* getSeason() const = 0;
+        };
+
+        class Summer : public IProvider
+        {
+            public:
+                virtual ~Summer() {}
+                virtual ISeason *getSeason() const final
+                {
+                    return new Season::Summer();
+                }
+        };
+
+        class Winter: public IProvider
+        {
+            public:
+                virtual ~Winter() {}
+                virtual Season::ISeason* getSeason() const final
+                {
+                    return new Season::Winter();
+                }
+        };
+    }
 }
 
-/* используем только интерфейсы - ничего не знаем о конкретных реализациях */
+Season::Provider::IProvider* getSeasonProvider(Season::Type seasonType)
+{
+    switch (seasonType)
+    {
+        case Season::Type::Summer: return new Season::Provider::Summer();
+        case Season::Type::Winter: return new Season::Provider::Winter();
+    }
+    return nullptr;
+}
+
 int main()
 {
-  /* получаем указатель на интерфейс фабрики */
-  Interface::Factory::Season *oSeasonFactory = obtaineSeasonFactory();
+  const Season::Provider::IProvider *seasonProvider = getSeasonProvider(Season::Type::Summer);
 
-  /* получаем указатель на интерфейс объекта типа 'Season' посредством фабрики */
-  Interface::Actor::Season *oSeason = oSeasonFactory->obtaineSeason();
+  const Season::ISeason *season = seasonProvider->getSeason();
 
-  /* используем объект */
-  oSeason->info();
-
-  /* удаляем объекты */
-  delete oSeasonFactory;
-  delete oSeason;
+  season->info();
 
   return 0;
 }
